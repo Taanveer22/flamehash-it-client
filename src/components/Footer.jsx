@@ -5,6 +5,7 @@ import {
   FaLinkedinIn,
   FaXTwitter,
 } from "react-icons/fa6";
+import logo from "../assets/logo-black.png";
 
 const socials = [
   { icon: FaGithub, label: "GitHub", href: "#" },
@@ -72,12 +73,12 @@ const Footer = () => {
             transition={{ type: "spring", stiffness: 300, damping: 18 }}
             className="flex h-9 w-9 items-center justify-center rounded-md border border-base-300 bg-base-200 text-sm font-semibold text-base-content"
           >
-            L
+            <img src={logo} alt="Logo" className="h-full w-full object-cover" />
           </motion.div>
 
           <div>
             <h3 className="text-sm font-medium tracking-tight text-base-content">
-              Lab<span className="text-base-content/40">7</span>
+              Flamehash
             </h3>
             <p className="text-xs text-base-content/45">IT Agency</p>
           </div>
@@ -88,14 +89,11 @@ const Footer = () => {
           variants={fadeUp}
           className="text-center text-sm text-base-content/45"
         >
-          © {new Date().getFullYear()} Lab7. All rights reserved.
+          © {new Date().getFullYear()} Flamehash. All rights reserved.
         </motion.p>
 
         {/* Social Icons */}
-        <motion.div
-          variants={iconStagger}
-          className="flex items-center gap-2"
-        >
+        <motion.div variants={iconStagger} className="flex items-center gap-2">
           {socials.map(({ icon: Icon, label, href }) => (
             <motion.a
               key={label}

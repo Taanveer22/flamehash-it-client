@@ -2,6 +2,7 @@ import { useState } from "react";
 import { NavLink } from "react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X, ArrowRight } from "lucide-react";
+import logo from "../assets/logo-black.png";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -62,12 +63,16 @@ export default function Header() {
             transition={SPRING}
             className="flex h-9 w-9 items-center justify-center rounded-md border border-base-300 bg-base-200 font-semibold text-base-content"
           >
-            L
+            <img
+              src={logo}
+              alt="Logo"
+              className="h-full w-full object-cover"
+            />
           </motion.div>
 
           <div>
             <h1 className="text-sm font-semibold leading-none text-base-content">
-              Lab7
+              Flamehash
             </h1>
             <p className="mt-1 text-xs text-base-content/50">IT Agency</p>
           </div>
