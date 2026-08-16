@@ -2,6 +2,7 @@ import Banner from "../components/Banner";
 import Carousel from "../components/Carousel";
 import AboutUs from "./AboutUs";
 import Contact from "./Contact";
+import Dashboard from "./Dashboard";
 import Projects from "./Projects";
 import Services from "./Services";
 import Testimonials from "./Testimonials";
@@ -29,6 +30,9 @@ const Home = () => {
       </div>
       <div className="mb-8 lg:mb-16">
         <Testimonials></Testimonials>
+      </div>
+      <div className="mb-8 lg:mb-16">
+        <Dashboard></Dashboard>
       </div>
     </section>
   );
