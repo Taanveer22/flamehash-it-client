@@ -1,11 +1,5 @@
-// If you're on Next.js App Router, uncomment the line below —
-// this file uses hooks + framer motion, so it must run on the client.
-// "use client";
-
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "motion/react";
-// Using the older package? Swap this one line everywhere it appears:
-// import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
 
 /* ------------------------------------------------------------------ */
 /*  Sample data — swap these for your API response, shape stays same   */
@@ -41,6 +35,12 @@ const REVENUE_SOURCES = [
 
 const REVENUE_TOTAL = REVENUE_SOURCES.reduce((sum, s) => sum + s.value, 0);
 const Y_TICKS = [30000, 25000, 20000, 15000, 10000, 5000, 0];
+
+// viewBox space for the donut — this stays fixed. The *rendered* size is
+// controlled purely by the responsive width/height Tailwind classes on its
+// wrapping div (svg is set to width="100%" height="100%"), so the same
+// geometry scales cleanly from phone to desktop with no JS/resize-listener
+// needed.
 const DONUT_SIZE = 220;
 const DONUT_STROKE = 26;
 const DONUT_RADIUS = (DONUT_SIZE - DONUT_STROKE) / 2;
@@ -127,24 +127,24 @@ function StatCard({ icon, label, value, change, trend, period = "Last 7 days", i
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, delay: index * 0.08, ease: EASE }}
       whileHover={glowHover}
-      className="rounded-2xl border border-base-300 bg-base-100 p-5 shadow-sm"
+      className="rounded-2xl border border-base-300 bg-base-100 p-4 shadow-sm sm:p-5"
     >
-      <div className="flex items-start justify-between">
-        <p className="text-sm font-medium text-base-content/60">{label}</p>
+      <div className="flex items-start justify-between gap-2">
+        <p className="text-xs font-medium text-base-content/60 sm:text-sm">{label}</p>
         <motion.span
           whileHover={{ rotate: 12, scale: 1.08 }}
           transition={{ type: "spring", stiffness: 300, damping: 15 }}
-          className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-base-300 text-base-content/70"
+          className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-base-300 text-base-content/70 sm:h-9 sm:w-9"
         >
-          <Icon name={icon} className="h-5 w-5" />
+          <Icon name={icon} className="h-4 w-4 sm:h-5 sm:w-5" />
         </motion.span>
       </div>
 
-      <div className="mt-3 text-3xl font-semibold tracking-tight text-base-content">
+      <div className="mt-3 text-2xl font-semibold tracking-tight text-base-content sm:text-3xl">
         <AnimatedNumber value={value} />
       </div>
 
-      <div className="mt-2 flex items-center gap-2 text-sm">
+      <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs sm:text-sm">
         <span className="text-base-content/50">{period}</span>
         <span
           className={
@@ -162,7 +162,9 @@ function StatCard({ icon, label, value, change, trend, period = "Last 7 days", i
 
 /* ------------------------------------------------------------------ */
 /*  RevenueOverview — capsule bar chart: fills the card height,        */
-/*  grows in view, hover tooltip, glow-border on the card itself       */
+/*  grows in view, hover tooltip, glow-border on the card itself.      */
+/*  On small screens the bar track scrolls horizontally instead of     */
+/*  squashing 12 months into an unreadable strip.                      */
 /* ------------------------------------------------------------------ */
 
 function RevenueOverview({ data, total, growth, max = 30000 }) {
@@ -174,23 +176,23 @@ function RevenueOverview({ data, total, growth, max = 30000 }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.32, ease: EASE }}
       whileHover={glowHover}
-      className="flex h-full flex-col rounded-2xl border border-base-300 bg-base-100 p-6 shadow-sm"
+      className="flex h-full flex-col rounded-2xl border border-base-300 bg-base-100 p-4 shadow-sm sm:p-6"
     >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h3 className="text-base font-semibold text-base-content">Revenue Overview</h3>
+          <h3 className="text-sm font-semibold text-base-content sm:text-base">Revenue Overview</h3>
           <div className="mt-2 flex flex-wrap items-center gap-2">
-            <span className="text-3xl font-semibold tracking-tight text-base-content">
+            <span className="text-2xl font-semibold tracking-tight text-base-content sm:text-3xl">
               ${total.toLocaleString()}
             </span>
             <span className="badge badge-sm border-none bg-success/15 font-medium text-success">
               +{growth}%
             </span>
-            <span className="text-sm text-base-content/50">vs last month</span>
+            <span className="text-xs text-base-content/50 sm:text-sm">vs last month</span>
           </div>
         </div>
 
-        <div className="flex items-center gap-4 text-sm text-base-content/60">
+        <div className="flex items-center gap-3 text-xs text-base-content/60 sm:gap-4 sm:text-sm">
           <span className="flex items-center gap-1.5">
             <span className="h-2 w-2 rounded-full bg-neutral" />
             Closed Deals
@@ -202,76 +204,87 @@ function RevenueOverview({ data, total, growth, max = 30000 }) {
         </div>
       </div>
 
-      {/* chart area grows to fill whatever height the card ends up with,
-          so it matches RevenueSources on large screens instead of leaving
-          a fixed 224px block with dead space below it */}
-      <div className="mt-8 flex flex-1 gap-3 sm:gap-4">
+      {/* chart area — explicit heights on small/medium screens keep the
+          bars visible even though the card's own height is auto there;
+          from lg up the row is stretched (items-stretch on the parent
+          grid) so h-full takes over and matches RevenueSources. */}
+      <div className="mt-6 flex h-56 gap-2 sm:mt-8 sm:h-64 sm:gap-3 md:h-72 lg:h-full lg:flex-1">
         {/* y-axis labels */}
-        <div className="flex flex-col justify-between pb-6 text-xs text-base-content/40">
+        <div className="flex shrink-0 flex-col justify-between pb-6 text-[10px] text-base-content/40 sm:text-xs">
           {Y_TICKS.map((t) => (
             <span key={t}>{t === 0 ? "0k" : `${t / 1000}k`}</span>
           ))}
         </div>
 
-        {/* bars */}
-        <div className="flex flex-1 items-end justify-between gap-1.5 sm:gap-3">
-          {data.map((m, i) => {
-            const isHovered = hoveredMonth === m.month;
-            return (
-              <div
-                key={m.month}
-                onMouseEnter={() => setHoveredMonth(m.month)}
-                onMouseLeave={() => setHoveredMonth(null)}
-                className="flex h-full flex-1 flex-col items-center justify-end gap-3"
-              >
-                <div className="relative h-full w-full">
-                  {/* hover tooltip */}
-                  <AnimatePresence>
-                    {isHovered && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 6, scale: 0.92 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 6, scale: 0.92 }}
-                        transition={{ duration: 0.15, ease: EASE }}
-                        className="pointer-events-none absolute -top-2 left-1/2 z-10 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-lg border border-base-300 bg-base-100 px-2.5 py-1.5 text-xs shadow-lg"
-                      >
-                        <p className="font-medium text-base-content">${m.closed.toLocaleString()} closed</p>
-                        <p className="text-base-content/50">${m.pipeline.toLocaleString()} pipeline</p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+        {/* bars — scrolls horizontally on very narrow viewports instead of
+            crushing 12 bars into an unreadable strip; from sm up there's
+            enough room and the min-width relaxes so bars fill the card. */}
+        <div className="min-w-0 flex-1 overflow-x-auto overflow-y-hidden pb-1 [scrollbar-width:thin]">
+          <div className="flex h-full min-w-[520px] items-end justify-between gap-1.5 sm:min-w-0 sm:gap-2 md:gap-3">
+            {data.map((m, i) => {
+              const isHovered = hoveredMonth === m.month;
+              return (
+                <div
+                  key={m.month}
+                  onMouseEnter={() => setHoveredMonth(m.month)}
+                  onMouseLeave={() => setHoveredMonth(null)}
+                  onTouchStart={() => setHoveredMonth(m.month)}
+                  className="flex h-full flex-1 flex-col items-center justify-end gap-2 sm:gap-3"
+                >
+                  <div className="relative h-full w-full">
+                    {/* hover tooltip */}
+                    <AnimatePresence>
+                      {isHovered && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 6, scale: 0.92 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 6, scale: 0.92 }}
+                          transition={{ duration: 0.15, ease: EASE }}
+                          className="pointer-events-none absolute -top-2 left-1/2 z-10 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-lg border border-base-300 bg-base-100 px-2 py-1.5 text-[11px] shadow-lg sm:px-2.5 sm:text-xs"
+                        >
+                          <p className="font-medium text-base-content">${m.closed.toLocaleString()} closed</p>
+                          <p className="text-base-content/50">${m.pipeline.toLocaleString()} pipeline</p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
 
-                  {/* pipeline track */}
-                  <motion.div
-                    initial={{ height: 0 }}
-                    whileInView={{ height: `${Math.min((m.pipeline / max) * 100, 100)}%` }}
-                    viewport={{ once: true }}
-                    animate={{ opacity: isHovered ? 0.7 : 1 }}
-                    transition={{
-                      height: { duration: 0.6, delay: i * 0.04, ease: EASE },
-                      opacity: { duration: 0.15 },
-                    }}
-                    className="absolute inset-x-0 bottom-0 mx-auto w-1.5 rounded-full bg-base-300 sm:w-2"
-                  />
-                  {/* closed deals fill */}
-                  <motion.div
-                    initial={{ height: 0 }}
-                    whileInView={{ height: `${Math.min((m.closed / max) * 100, 100)}%` }}
-                    viewport={{ once: true }}
-                    animate={{ filter: isHovered ? "brightness(1.3)" : "brightness(1)" }}
-                    transition={{
-                      height: { duration: 0.6, delay: i * 0.04 + 0.12, ease: EASE },
-                      filter: { duration: 0.15 },
-                    }}
-                    className="absolute inset-x-0 bottom-0 mx-auto w-2.5 rounded-full bg-neutral sm:w-3"
-                  />
+                    {/* pipeline track */}
+                    <motion.div
+                      initial={{ height: 0 }}
+                      whileInView={{ height: `${Math.min((m.pipeline / max) * 100, 100)}%` }}
+                      viewport={{ once: true }}
+                      animate={{ opacity: isHovered ? 0.7 : 1 }}
+                      transition={{
+                        height: { duration: 0.6, delay: i * 0.04, ease: EASE },
+                        opacity: { duration: 0.15 },
+                      }}
+                      className="absolute inset-x-0 bottom-0 mx-auto w-1.5 rounded-full bg-base-300 sm:w-2"
+                    />
+                    {/* closed deals fill */}
+                    <motion.div
+                      initial={{ height: 0 }}
+                      whileInView={{ height: `${Math.min((m.closed / max) * 100, 100)}%` }}
+                      viewport={{ once: true }}
+                      animate={{ filter: isHovered ? "brightness(1.3)" : "brightness(1)" }}
+                      transition={{
+                        height: { duration: 0.6, delay: i * 0.04 + 0.12, ease: EASE },
+                        filter: { duration: 0.15 },
+                      }}
+                      className="absolute inset-x-0 bottom-0 mx-auto w-2.5 rounded-full bg-neutral sm:w-3"
+                    />
+                  </div>
+                  <span
+                    className={
+                      "text-[10px] transition-colors sm:text-xs " +
+                      (isHovered ? "text-base-content" : "text-base-content/50")
+                    }
+                  >
+                    {m.month}
+                  </span>
                 </div>
-                <span className={"text-xs transition-colors " + (isHovered ? "text-base-content" : "text-base-content/50")}>
-                  {m.month}
-                </span>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
     </motion.div>
@@ -280,7 +293,9 @@ function RevenueOverview({ data, total, growth, max = 30000 }) {
 
 /* ------------------------------------------------------------------ */
 /*  RevenueSources — donut: draws in view, arc <-> legend hover sync,  */
-/*  glow-border on hover, no mutable variable during render            */
+/*  glow-border on hover. The donut itself is now rendered at 100%     */
+/*  width/height inside a responsively-sized wrapper, so it shrinks    */
+/*  cleanly on phones instead of overflowing the card.                 */
 /* ------------------------------------------------------------------ */
 
 function RevenueSources({ data, total }) {
@@ -306,15 +321,17 @@ function RevenueSources({ data, total }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.4, ease: EASE }}
       whileHover={glowHover}
-      className="flex h-full flex-col rounded-2xl border border-base-300 bg-base-100 p-6 shadow-sm"
+      className="flex h-full flex-col rounded-2xl border border-base-300 bg-base-100 p-4 shadow-sm sm:p-6"
     >
-      <h3 className="text-base font-semibold text-base-content">Revenue Sources</h3>
+      <h3 className="text-sm font-semibold text-base-content sm:text-base">Revenue Sources</h3>
 
-      <div
-        className="relative mx-auto mt-4 grid place-items-center"
-        style={{ width: DONUT_SIZE, height: DONUT_SIZE }}
-      >
-        <svg width={DONUT_SIZE} height={DONUT_SIZE} viewBox={`0 0 ${DONUT_SIZE} ${DONUT_SIZE}`} className="-rotate-90">
+      <div className="relative mx-auto mt-4 grid h-[170px] w-[170px] place-items-center sm:h-[200px] sm:w-[200px] md:h-[220px] md:w-[220px]">
+        <svg
+          width="100%"
+          height="100%"
+          viewBox={`0 0 ${DONUT_SIZE} ${DONUT_SIZE}`}
+          className="-rotate-90"
+        >
           {/* base track */}
           <circle
             cx={DONUT_SIZE / 2}
@@ -369,15 +386,15 @@ function RevenueSources({ data, total }) {
           >
             {hovered ? (
               <>
-                <p className="text-xs text-base-content/50">{hovered}</p>
-                <p className="text-xl font-semibold text-base-content">
+                <p className="text-[11px] text-base-content/50 sm:text-xs">{hovered}</p>
+                <p className="text-lg font-semibold text-base-content sm:text-xl">
                   ${segments.find((d) => d.label === hovered).value.toLocaleString()}
                 </p>
               </>
             ) : (
               <>
-                <p className="text-xs text-base-content/50">Total</p>
-                <p className="text-xl font-semibold text-base-content">${total.toLocaleString()}</p>
+                <p className="text-[11px] text-base-content/50 sm:text-xs">Total</p>
+                <p className="text-lg font-semibold text-base-content sm:text-xl">${total.toLocaleString()}</p>
               </>
             )}
           </motion.div>
@@ -401,12 +418,12 @@ function RevenueSources({ data, total }) {
               onMouseEnter={() => setHovered(d.label)}
               onMouseLeave={() => setHovered(null)}
               className={
-                "-mx-2 flex cursor-pointer items-center justify-between rounded-lg px-2 py-1.5 text-sm transition-colors " +
+                "-mx-2 flex cursor-pointer items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-xs transition-colors sm:text-sm " +
                 (hovered === d.label ? "bg-base-200" : "")
               }
             >
               <span className="flex items-center gap-2 text-base-content/80">
-                <span className="h-2.5 w-1.5 rounded-full" style={{ backgroundColor: d.color }} />
+                <span className="h-2.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: d.color }} />
                 {d.label}
               </span>
               <span className="flex items-center gap-2">
@@ -435,17 +452,20 @@ function RevenueSources({ data, total }) {
 
 export default function Dashboard() {
   return (
-    <div className="space-y-6">
-      {/* stat cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="space-y-4 sm:space-y-6">
+      {/* stat cards — 2-up on phones so the row isn't a tall single
+          column, 4-up from md (tablet landscape) upward */}
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
         {STATS.map((stat, i) => (
           <StatCard key={stat.label} {...stat} index={i} />
         ))}
       </div>
 
       {/* charts — items-stretch (grid default) makes both columns share
-          the row's height; each card fills that height with h-full so
-          RevenueOverview and RevenueSources always match on lg+ screens */}
+          the row's height once they're side by side; the switch to a
+          2-column layout now happens at lg (1024px) so tablets in
+          portrait still get the taller, more readable single-column
+          stack, while landscape tablets/laptops get the split view. */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:items-stretch">
         <div className="lg:col-span-2">
           <RevenueOverview data={REVENUE_DATA} total={640000} growth={18} />
