@@ -306,7 +306,7 @@ const Contact = () => {
                         Sending...
                       </>
                     ) : (
-                      "Book Free Consultation"
+                      "Get In Touch"
                     )}
                   </motion.button>
                 </fieldset>

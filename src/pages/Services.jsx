@@ -42,7 +42,7 @@ const Services = () => {
       >
         <Heading
           title="Our Services"
-          description="We don't showcase logos — we showcase results."
+          description="Explore how we transform deep technical friction into high-velocity products that scale"
         />
       </motion.div>
 

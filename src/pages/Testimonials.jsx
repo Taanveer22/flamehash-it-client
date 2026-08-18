@@ -30,7 +30,8 @@ const testimonials = [
     company: "Nimbus",
     icon: Sparkles,
     color: "secondary",
-    quote: "Flamehash has improved my workflow. The components are appealing and perform well right out of the box.",
+    quote:
+      "Flamehash has improved my workflow. The components are appealing and perform well right out of the box.",
   },
   {
     name: "Brad Hanna",
@@ -38,7 +39,8 @@ const testimonials = [
     company: "Orbital",
     icon: Orbit,
     color: "success",
-    quote: "Using Flamehash has made my projects intuitive and efficient. The documentation is clear and thorough.",
+    quote:
+      "Using Flamehash has made my projects intuitive and efficient. The documentation is clear and thorough.",
   },
   {
     name: "Brad Hanna",
@@ -46,7 +48,8 @@ const testimonials = [
     company: "Flux",
     icon: Zap,
     color: "info",
-    quote: "The community around Flamehash is fantastic! I've received support, making my experience so much smoother.",
+    quote:
+      "The community around Flamehash is fantastic! I've received support, making my experience so much smoother.",
   },
   {
     name: "Ella Johnson",
@@ -54,7 +57,8 @@ const testimonials = [
     company: "Verve",
     icon: Flame,
     color: "warning",
-    quote: "Using Flamehash has made my projects more efficient, with clear documentation and a great component set.",
+    quote:
+      "Using Flamehash has made my projects more efficient, with clear documentation and a great component set.",
   },
   {
     name: "Marcus Lee",
@@ -62,7 +66,8 @@ const testimonials = [
     company: "Solace",
     icon: Waves,
     color: "accent",
-    quote: "The build quality is outstanding. Every component just works, and the theming system saved us weeks.",
+    quote:
+      "The build quality is outstanding. Every component just works, and the theming system saved us weeks.",
   },
   {
     name: "Priya Nair",
@@ -70,7 +75,8 @@ const testimonials = [
     company: "Compass",
     icon: Compass,
     color: "primary",
-    quote: "Support response time is incredible. We shipped our redesign twice as fast using Flamehash.",
+    quote:
+      "Support response time is incredible. We shipped our redesign twice as fast using Flamehash.",
   },
   {
     name: "Tom Reyes",
@@ -78,7 +84,8 @@ const testimonials = [
     company: "Meadow",
     icon: Leaf,
     color: "success",
-    quote: "Clean, accessible, and genuinely well thought out. It's rare to find a kit this polished out of the box.",
+    quote:
+      "Clean, accessible, and genuinely well thought out. It's rare to find a kit this polished out of the box.",
   },
   {
     name: "Aiko Sato",
@@ -86,7 +93,8 @@ const testimonials = [
     company: "Facet",
     icon: Gem,
     color: "secondary",
-    quote: "The attention to detail in every state — hover, focus, loading — is what sold the whole team on Flamehash.",
+    quote:
+      "The attention to detail in every state — hover, focus, loading — is what sold the whole team on Flamehash.",
   },
 ];
 
@@ -110,7 +118,7 @@ const ringVariants = {
 const TestimonialCard = ({ item }) => {
   const Icon = item.icon;
   const avatarUrl = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
-    item.name
+    item.name,
   )}&backgroundType=solid`;
 
   return (
@@ -163,9 +171,7 @@ const TestimonialCard = ({ item }) => {
           <p className="truncate text-sm font-semibold text-base-content">
             {item.name}
           </p>
-          <p className="truncate text-xs text-base-content/45">
-            {item.handle}
-          </p>
+          <p className="truncate text-xs text-base-content/45">{item.handle}</p>
         </div>
       </div>
     </motion.div>
@@ -220,7 +226,7 @@ const Testimonials = () => {
       >
         <Heading
           title="Testimonials"
-          description="Predictive analytics has really made our processes smoother and boosted our business results a ton!"
+          description="Discover how fast-growing companies scale their operations for enterprise value"
         />
       </motion.div>
 
