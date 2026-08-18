@@ -41,7 +41,7 @@ const Services = () => {
         className="mx-auto mb-10 max-w-2xl text-center sm:mb-12"
       >
         <Heading
-          title="Real problems, real outcomes."
+          title="Our Services"
           description="We don't showcase logos — we showcase results."
         />
       </motion.div>

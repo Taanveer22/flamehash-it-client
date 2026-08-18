@@ -16,85 +16,64 @@ import Heading from "../components/Heading";
 // =============================================================================
 // ABOUT US SECTION
 // -----------------------------------------------------------------------------
-// This file is split into 3 clear parts, top to bottom:
-//   1. DATA        -> plain JS objects/arrays that feed the UI (easy to edit)
-//   2. ANIMATION   -> Framer Motion variants (how things move on screen)
-//   3. UI PIECES   -> reusable card component + the main AboutUs component
-//
-// If you're new to this codebase: you almost never need to touch parts 2/3.
-// Most day-to-day changes (new team member, new stat, new quote) only
-// require editing the DATA section below.
+// 1. DATA      -> plain JS objects/arrays that feed the UI
+// 2. ANIMATION -> Framer Motion variants + spotlight timing
+// 3. UI PIECES -> card component + main AboutUs component
 // =============================================================================
 
 // -----------------------------------------------------------------------------
 // 1. DATA
 // -----------------------------------------------------------------------------
 
-// Small stats shown in the "At a glance" card.
 const companyStats = [
-  { icon: Calendar, label: "Founded", value: "2021" },
-  { icon: MapPin, label: "HQ", value: "Remote-first" },
-  { icon: Globe2, label: "Countries", value: "18+" },
+  { icon: Calendar, label: "Founded", value: "2026" },
+  { icon: MapPin, label: "HQ", value: "Dhaka, Bangladesh" },
+  { icon: Globe2, label: "Countries", value: "10+" },
   { icon: Star, label: "Client rating", value: "4.9/5" },
 ];
 
-// Steps shown in the "Our approach" checklist card.
-// `done: true` renders a checked box, `done: false` renders an empty one.
 const workflow = [
   { label: "Discovery workshop", done: true },
   { label: "UI/UX strategy", done: true },
   { label: "Development sprint", done: false },
 ];
 
-// The founder / lead — shown with a quote in its own card.
 const teamLead = {
-  initials: "AR",
-  name: "Atiqur Rahman",
-  role: "Founder & Lead Developer",
+  initials: "SS",
+  name: "Sumit Saha",
+  role: "Founder, Analygen",
   quote:
     "Great products come from small teams with strong execution and clear communication.",
   gradient: "from-indigo-500 to-violet-500",
 };
 
-// Rest of the team — shown in the "The team" list card.
 const team = [
   {
-    initials: "SA",
-    name: "Sarah Ahmed",
-    role: "UI/UX Designer",
+    initials: "TI",
+    name: "Tanvir Islam",
+    role: "Full Stack Web Developer",
     gradient: "from-pink-500 to-rose-500",
   },
   {
-    initials: "RK",
-    name: "Rakib Khan",
-    role: "Frontend Engineer",
+    initials: "SJ",
+    name: "Shifat Jesun",
+    role: "Digital Marketing Specialist",
     gradient: "from-sky-500 to-cyan-500",
   },
   {
-    initials: "MJ",
-    name: "Mehedi Jaman",
-    role: "Backend Engineer",
+    initials: "AFZ",
+    name: "Al Fattah Zisun",
+    role: "Graphics Designer",
     gradient: "from-emerald-500 to-green-500",
   },
 ];
 
-// Documentation links shown in the "Our documentation" card.
 const docs = [
-  {
-    title: "Development handbook",
-    subtitle: "Coding standards and workflow",
-  },
-  {
-    title: "Project playbook",
-    subtitle: "Delivery process and milestones",
-  },
-  {
-    title: "Quality checklist",
-    subtitle: "Testing and deployment guidelines",
-  },
+  { title: "Development handbook", subtitle: "Coding standards and workflow" },
+  { title: "Project playbook", subtitle: "Delivery process and milestones" },
+  { title: "Quality checklist", subtitle: "Testing and deployment guidelines" },
 ];
 
-// Little floating avatar bubbles in the "Always in sync" card.
 const cluster = [
   { initials: "UI", gradient: "from-teal-500 to-emerald-500" },
   { initials: "FE", gradient: "from-amber-500 to-orange-500" },
@@ -103,48 +82,31 @@ const cluster = [
 ];
 
 // -----------------------------------------------------------------------------
-// 2. ANIMATION (Framer Motion + the traveling border spotlight)
+// 2. ANIMATION
 // -----------------------------------------------------------------------------
 
-// There are 7 cards total in this section (4 in the first grid, 3 in the
-// second). The spotlight moves through them in this exact order: 0, 1, 2,
-// 3, 4, 5, 6, then back to 0 — forever.
+// Total cards the spotlight travels through (4 in grid 1, 3 in grid 2).
 const CARD_COUNT = 7;
 
-// How long the glowing comet takes to complete ONE full lap around a
-// card's border, in seconds. This single number controls BOTH how long
-// the CSS animation runs AND how long the JS timer waits before moving
-// the spotlight to the next card — keeping them in sync.
+// Seconds for one full lap of the comet around a card's border.
+// Also used as the interval delay, so the spotlight hands off right
+// as the previous card's comet finishes its lap.
 const LAP_SECONDS = 3.5;
 
-// Parent variant: staggers its children in one after another instead of
-// everything appearing at once — this is what makes a grid of cards feel
-// choreographed rather than just "on/off".
+// Staggers each card's entrance instead of showing them all at once.
 const containerVariants = {
   hidden: {},
-  show: {
-    transition: {
-      staggerChildren: 0.08,
-    },
-  },
+  show: { transition: { staggerChildren: 0.08 } },
 };
 
-// Each card fades in, rises up slightly, and grows to full size.
-// This runs on every card because every card uses `cardVariants` below.
+// Fade + rise + grow entrance, used by every card.
 const cardVariants = {
-  hidden: {
-    opacity: 0,
-    y: 24,
-    scale: 0.97,
-  },
+  hidden: { opacity: 0, y: 24, scale: 0.97 },
   show: {
     opacity: 1,
     y: 0,
     scale: 1,
-    transition: {
-      duration: 0.5,
-      ease: "easeOut",
-    },
+    transition: { duration: 0.5, ease: "easeOut" },
   },
 };
 
@@ -155,35 +117,18 @@ const cardVariants = {
 /**
  * ShimmerBorder
  * -------------
- * Draws TWO rounded rectangles on top of a card, using SVG:
+ * Draws two things on top of a card:
+ *   1. A dim outline, always visible on every card.
+ *   2. A bright "comet" segment that travels once around the border,
+ *      only while this card is `active`.
  *
- *   1. A dim, always-visible outline — this is the normal "resting" border,
- *      shown on every card, always.
- *   2. A short, bright, glowing "comet" segment — but ONLY while this
- *      specific card has been told it's `active`. When a card is not
- *      active, the comet simply isn't rendered, so it sits there quiet
- *      and dim like all the others.
+ * `pathLength={100}` makes the rectangle's outline always equal "100
+ * units", no matter the card's real size, so the same numbers work on
+ * every card shape.
  *
- * The comet is drawn with a transparent -> white -> transparent gradient
- * and animates its `stroke-dashoffset` exactly ONCE (not on a loop) —
- * one full lap around the border — which is what lets the parent
- * component hand the spotlight to the next card right as this one
- * finishes.
- *
- * `pathLength={100}` tells the browser "treat this rectangle's outline as
- * exactly 100 units long", no matter the card's real pixel size — so the
- * same dash numbers below work identically on every card shape.
- *
- * @param {number}  radius        - corner roundness in px (24 = rounded-3xl,
- *                                  a big number like 999 gives a full circle).
- * @param {boolean} active        - true while this card currently holds
- *                                  the spotlight.
- * @param {number}  activationKey - changes every time this card becomes
- *                                  active again; forces React to mount a
- *                                  brand-new <rect>, which restarts the
- *                                  CSS animation from the very start.
- * @param {string}  gradientId    - unique id for this card's <linearGradient>,
- *                                  since SVG ids must be unique on the page.
+ * The comet's animation is handled entirely by Framer Motion — it
+ * animates `strokeDashoffset` from 0 to -100 once, then the card stops
+ * being active and the comet unmounts (see `key` below).
  */
 function ShimmerBorder({ radius = 24, active = false, activationKey, gradientId }) {
   return (
@@ -192,15 +137,16 @@ function ShimmerBorder({ radius = 24, active = false, activationKey, gradientId 
       className="pointer-events-none absolute inset-0 h-full w-full"
     >
       <defs>
-        {/* transparent -> bright white -> transparent = the "comet" look */}
+        {/* transparent -> bright -> transparent = the "comet" look.
+            Uses theme variables so it looks right in light or dark mode. */}
         <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor="var(--color-primary)" stopOpacity="0" />
-          <stop offset="50%" stopColor="#ffffff" stopOpacity="1" />
+          <stop offset="50%" stopColor="var(--color-base-content)" stopOpacity="1" />
           <stop offset="100%" stopColor="var(--color-primary)" stopOpacity="0" />
         </linearGradient>
       </defs>
 
-      {/* 1. dim base outline — visible on every card, all the time */}
+      {/* dim resting outline, always on */}
       <rect
         x="1"
         y="1"
@@ -212,11 +158,11 @@ function ShimmerBorder({ radius = 24, active = false, activationKey, gradientId 
         strokeWidth="2"
       />
 
-      {/* 2. bright comet — only exists while this card is active, and
-             remounts (via `key`) every time it becomes active again so
-             the animation always restarts from the beginning */}
+      {/* bright comet — only exists while active. `key` forces a fresh
+          mount each time this card becomes active again, so the
+          animation always restarts from the beginning. */}
       {active && (
-        <rect
+        <motion.rect
           key={activationKey}
           x="1"
           y="1"
@@ -228,8 +174,16 @@ function ShimmerBorder({ radius = 24, active = false, activationKey, gradientId 
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeDasharray="22 78"
-          className="fill-none shimmer-comet"
-          style={{ animationDuration: `${LAP_SECONDS}s` }}
+          className="fill-none"
+          initial={{ strokeDashoffset: 0 }}
+          animate={{ strokeDashoffset: -100 }}
+          transition={{ duration: LAP_SECONDS, ease: "linear" }}
+          style={{
+            filter: `
+              drop-shadow(0 0 4px var(--color-primary))
+              drop-shadow(0 0 10px color-mix(in oklch, var(--color-base-content) 55%, transparent))
+            `,
+          }}
         />
       )}
     </svg>
@@ -239,45 +193,22 @@ function ShimmerBorder({ radius = 24, active = false, activationKey, gradientId 
 /**
  * MotionCard
  * -----------
- * A single reusable "card" wrapper used by every box in this section
- * (stats, workflow, team count, quote, docs, sync, team).
+ * Shared wrapper for every card in this section (border, background,
+ * rounded corners, hover lift). Change the look here once, and every
+ * card updates together.
  *
- * Putting the shared look (border, background, rounded corners, hover
- * animation) in ONE component means:
- *   - every card automatically stays visually consistent
- *   - if you want to change the look of ALL cards, you only edit it here
- *
- * SPOTLIGHT BORDER:
- * Every card renders a `ShimmerBorder`, but only the card whose `index`
- * matches the section's current `activeIndex` actually shows the moving
- * comet — see `AboutUs` below for where that state lives.
- *
- * @param {number} index - this card's position in the spotlight order
- *   (0, 1, 2, ...). Must be unique per card and match the order you want
- *   the spotlight to travel in.
- * @param {number} activeIndex - which card index currently has the
- *   spotlight, passed down from `AboutUs`.
- * @param {number} radius - passed straight through to ShimmerBorder so the
- *   glowing outline matches this card's actual corner shape (the circular
- *   "team count" card passes a big radius to get a full circle).
+ * @param index       this card's position in the spotlight order (0-6)
+ * @param activeIndex which card currently has the spotlight
+ * @param radius      passed to ShimmerBorder so the glow matches the
+ *                    card's actual shape (the circular card uses 999)
  */
-function MotionCard({
-  children,
-  className = "",
-  radius = 24,
-  index,
-  activeIndex,
-}) {
+function MotionCard({ children, className = "", radius = 24, index, activeIndex }) {
   const isActive = index === activeIndex;
 
   return (
     <motion.div
       variants={cardVariants}
-      whileHover={{
-        y: -6,
-        scale: 1.01,
-        transition: { duration: 0.2 },
-      }}
+      whileHover={{ y: -6, scale: 1.01, transition: { duration: 0.2 } }}
       className={`
         group relative overflow-hidden rounded-3xl
         bg-base-200
@@ -287,16 +218,13 @@ function MotionCard({
         ${className}
       `}
     >
-      {/* Hairline: a faint light line along the very top edge of the card.
-          Barely visible, but it's what makes a flat card feel like it has
-          a physical top edge catching light. */}
+      {/* thin light line along the top edge, gives a "physical edge" feel */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-base-content/15 to-transparent"
       />
 
-      {/* The glowing border — only "lit up" while this card is active.
-          `pointer-events-none` so it never blocks clicks/hovers. */}
+      {/* glowing border — lit up only while this card is active */}
       <ShimmerBorder
         radius={radius}
         active={isActive}
@@ -312,18 +240,13 @@ function MotionCard({
 /**
  * AboutUs
  * -------
- * The main exported section. Two card grids:
+ * Two card grids:
  *   Grid 1: company stats, workflow, team count, founder quote
  *   Grid 2: docs, sync illustration, team list
  */
 export default function AboutUs() {
-  // -----------------------------------------------------------------------
-  // The spotlight: one shared "which card index is glowing right now"
-  // value, owned right here and passed down to every card. A `setInterval`
-  // moves it forward by 1 every `LAP_SECONDS`, and `% CARD_COUNT` wraps it
-  // back to 0 once it passes the last card — so the sequence is always
-  // 0 -> 1 -> 2 -> ... -> 6 -> 0 -> 1 -> ... forever.
-  // -----------------------------------------------------------------------
+  // Which card index currently holds the spotlight. A timer advances it
+  // every LAP_SECONDS, wrapping back to 0 with `% CARD_COUNT`.
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
@@ -331,38 +254,12 @@ export default function AboutUs() {
       setActiveIndex((current) => (current + 1) % CARD_COUNT);
     }, LAP_SECONDS * 1000);
 
-    // Always clean up timers in useEffect, or they'd keep running (and
-    // pile up) even after this component is removed from the page.
+    // Clean up the timer so it doesn't keep running after unmount.
     return () => clearInterval(id);
   }, []);
 
   return (
     <section className="w-full">
-      {/*
-        This <style> tag defines the ONE animation every card's comet uses.
-        It says: "slide the dash pattern along the path one time, then
-        stay at the end." Because the comet <rect> is only ever mounted
-        while its card is active (see ShimmerBorder), "runs once" is
-        exactly what we want — the JS timer above is what decides when to
-        unmount it here and mount a fresh one on the next card.
-      */}
-      <style>{`
-        @keyframes shimmer-travel {
-          to {
-            stroke-dashoffset: -100;
-          }
-        }
-        .shimmer-comet {
-          animation-name: shimmer-travel;
-          animation-timing-function: linear;
-          animation-iteration-count: 1;
-          animation-fill-mode: forwards;
-          filter:
-            drop-shadow(0 0 4px var(--color-primary))
-            drop-shadow(0 0 10px rgba(255, 255, 255, 0.55));
-        }
-      `}</style>
-
       <div className="font-body">
         {/* ----------------------------- Header ----------------------------- */}
         <motion.div
@@ -373,7 +270,7 @@ export default function AboutUs() {
           className="mb-10"
         >
           <Heading
-            title="Less Hype. Proven Outcomes."
+            title="Our Teams"
             description="We don't rely on big-name logos to prove our worth—our software speaks for itself"
           />
         </motion.div>
@@ -390,26 +287,17 @@ export default function AboutUs() {
           <MotionCard index={0} activeIndex={activeIndex} className="p-6">
             <h3 className="text-base font-semibold text-base-content">
               At a glance.
-              <span className="font-normal text-base-content/60">
-                {" "}
-                The short version.
-              </span>
+              <span className="font-normal text-base-content/60"> The short version.</span>
             </h3>
 
             <div className="mt-6 space-y-3">
               {companyStats.map((item) => (
-                <div
-                  key={item.label}
-                  className="flex items-center justify-between"
-                >
+                <div key={item.label} className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-sm text-base-content/60">
                     <item.icon className="h-3.5 w-3.5" />
                     {item.label}
                   </div>
-
-                  <span className="text-sm font-medium text-base-content">
-                    {item.value}
-                  </span>
+                  <span className="text-sm font-medium text-base-content">{item.value}</span>
                 </div>
               ))}
             </div>
@@ -419,10 +307,7 @@ export default function AboutUs() {
           <MotionCard index={1} activeIndex={activeIndex} className="p-6">
             <h3 className="text-base font-semibold text-base-content">
               Our approach.
-              <span className="font-normal text-base-content/60">
-                {" "}
-                Ship every week.
-              </span>
+              <span className="font-normal text-base-content/60"> Ship every week.</span>
             </h3>
 
             <div className="mt-6 space-y-2">
@@ -437,26 +322,20 @@ export default function AboutUs() {
                   ) : (
                     <Square className="h-4 w-4 text-base-content/40" />
                   )}
-
-                  <span className="text-sm text-base-content/80">
-                    {step.label}
-                  </span>
+                  <span className="text-sm text-base-content/80">{step.label}</span>
                 </motion.div>
               ))}
             </div>
           </MotionCard>
 
           {/* --- Card: team count (circular) --- */}
-          {/* radius={999} makes the shimmer border trace a full circle
-              instead of rounded-rectangle corners, matching rounded-full */}
           <MotionCard
             index={2}
             activeIndex={activeIndex}
             radius={999}
             className="flex aspect-square flex-col items-center justify-center rounded-full p-6"
           >
-            {/* Soft glow tied to the theme's primary color instead of a flat
-                white glare — reads as intentional on any color theme. */}
+            {/* soft glow tied to the theme's primary color */}
             <div
               aria-hidden="true"
               className="absolute inset-0 opacity-40 transition-opacity duration-300 group-hover:opacity-70"
@@ -466,16 +345,11 @@ export default function AboutUs() {
               }}
             />
 
-            <motion.span
-              whileHover={{ scale: 1.08 }}
-              className="relative text-6xl font-bold text-base-content"
-            >
-              48
+            <motion.span whileHover={{ scale: 1.08 }} className="relative text-6xl font-bold text-base-content">
+              25
             </motion.span>
 
-            <span className="relative mt-2 text-sm text-base-content/60">
-              Team members
-            </span>
+            <span className="relative mt-2 text-sm text-base-content/60">Team members</span>
 
             <motion.button
               whileHover={{ scale: 1.1, rotate: 90 }}
@@ -490,24 +364,18 @@ export default function AboutUs() {
           <MotionCard index={3} activeIndex={activeIndex} className="p-6">
             <Quote className="h-5 w-5 text-base-content/30" />
 
-            <p className="mt-4 text-sm leading-relaxed text-base-content/80">
-              "{teamLead.quote}"
-            </p>
+            <p className="mt-4 text-sm leading-relaxed text-base-content/80">"{teamLead.quote}"</p>
 
             <div className="mt-6 flex items-center gap-3">
               <motion.div
                 whileHover={{ scale: 1.08 }}
                 className={`flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br ${teamLead.gradient}`}
               >
-                <span className="text-xs font-semibold text-white">
-                  {teamLead.initials}
-                </span>
+                <span className="text-xs font-semibold text-white">{teamLead.initials}</span>
               </motion.div>
 
               <div>
-                <p className="text-sm font-medium text-base-content">
-                  {teamLead.name}
-                </p>
+                <p className="text-sm font-medium text-base-content">{teamLead.name}</p>
                 <p className="text-xs text-base-content/50">{teamLead.role}</p>
               </div>
             </div>
@@ -526,18 +394,13 @@ export default function AboutUs() {
           <MotionCard index={4} activeIndex={activeIndex} className="p-6">
             <h3 className="text-base font-semibold text-base-content">
               Our documentation.
-              <span className="font-normal text-base-content/60">
-                {" "}
-                Everything is documented.
-              </span>
+              <span className="font-normal text-base-content/60"> Everything is documented.</span>
             </h3>
 
             <div className="mt-6 space-y-4">
               {docs.map((doc) => (
                 <div key={doc.title}>
-                  <p className="text-sm font-medium text-base-content">
-                    {doc.title}
-                  </p>
+                  <p className="text-sm font-medium text-base-content">{doc.title}</p>
                   <p className="text-xs text-base-content/50">{doc.subtitle}</p>
                 </div>
               ))}
@@ -545,25 +408,17 @@ export default function AboutUs() {
           </MotionCard>
 
           {/* --- Card: "always in sync" illustration --- */}
-          <MotionCard
-            index={5}
-            activeIndex={activeIndex}
-            className="p-6 lg:col-span-2"
-          >
+          <MotionCard index={5} activeIndex={activeIndex} className="p-6 lg:col-span-2">
             <h3 className="text-base font-semibold text-base-content">
               Always in sync.
-              <span className="font-normal text-base-content/60">
-                {" "}
-                Daily collaboration across time zones.
-              </span>
+              <span className="font-normal text-base-content/60"> Daily collaboration across time zones.</span>
             </h3>
 
             <div className="relative mt-8 flex h-32 items-center justify-center">
               <div className="absolute h-28 w-28 rounded-full bg-primary/20 blur-2xl" />
 
               {cluster.map((person, index) => {
-                // Each floating avatar has a fixed corner position so they
-                // form a loose ring around the center microphone icon.
+                // fixed corner spots so the avatars form a loose ring
                 const positions = [
                   "left-6 top-2",
                   "right-10 top-0",
@@ -572,17 +427,11 @@ export default function AboutUs() {
                 ];
 
                 return (
-                  <motion.div
-                    key={person.initials}
-                    whileHover={{ scale: 1.1 }}
-                    className={`absolute ${positions[index]}`}
-                  >
+                  <motion.div key={person.initials} whileHover={{ scale: 1.1 }} className={`absolute ${positions[index]}`}>
                     <div
                       className={`flex h-10 w-10 items-center justify-center rounded-full border-2 border-base-200 bg-gradient-to-br ${person.gradient}`}
                     >
-                      <span className="text-xs font-semibold text-white">
-                        {person.initials}
-                      </span>
+                      <span className="text-xs font-semibold text-white">{person.initials}</span>
                     </div>
                   </motion.div>
                 );
@@ -602,34 +451,18 @@ export default function AboutUs() {
           <MotionCard index={6} activeIndex={activeIndex} className="p-6">
             <h3 className="text-base font-semibold text-base-content">
               The team.
-              <span className="font-normal text-base-content/60">
-                {" "}
-                Meet the people.
-              </span>
+              <span className="font-normal text-base-content/60"> Meet the people.</span>
             </h3>
 
             <div className="mt-6 space-y-4">
               {team.map((member) => (
-                <motion.div
-                  key={member.name}
-                  whileHover={{ x: 4 }}
-                  className="flex items-center gap-3"
-                >
-                  <div
-                    className={`flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br ${member.gradient}`}
-                  >
-                    <span className="text-[10px] font-semibold text-white">
-                      {member.initials}
-                    </span>
+                <motion.div key={member.name} whileHover={{ x: 4 }} className="flex items-center gap-3">
+                  <div className={`flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br ${member.gradient}`}>
+                    <span className="text-[10px] font-semibold text-white">{member.initials}</span>
                   </div>
-
                   <div>
-                    <p className="text-sm font-medium text-base-content">
-                      {member.name}
-                    </p>
-                    <p className="text-xs text-base-content/50">
-                      {member.role}
-                    </p>
+                    <p className="text-sm font-medium text-base-content">{member.name}</p>
+                    <p className="text-xs text-base-content/50">{member.role}</p>
                   </div>
                 </motion.div>
               ))}

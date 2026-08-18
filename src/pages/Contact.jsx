@@ -19,8 +19,8 @@ const infoCards = [
     icon: Mail,
     title: "Email",
     subtitle: "Get a response within 24 hours",
-    value: "hello@mobile.com",
-    href: "mailto:hello@mobile.com",
+    value: "flamehashagency@gmail.com",
+    href: "mailto:flamehashagency@gmail.com",
   },
   {
     icon: MessageCircle,
@@ -32,15 +32,15 @@ const infoCards = [
   {
     icon: Phone,
     title: "Phone",
-    subtitle: "Mon–Fri, 9AM–6PM EST",
-    value: "+1 (555) 123-4567",
-    href: "tel:+15551234567",
+    subtitle: "Sat–Thu, 8AM–10PM (Bangladesh Time)",
+    value: "+8801571715721",
+    href: "tel:+8801571715721",
   },
   {
     icon: MapPin,
     title: "Office",
     subtitle: "Schedule an in-person meeting",
-    value: "123 Innovation St, Tech City",
+    value: "Kallyanpur, Dhaka, Bangladesh",
   },
 ];
 

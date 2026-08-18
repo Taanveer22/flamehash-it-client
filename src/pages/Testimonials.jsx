@@ -30,8 +30,7 @@ const testimonials = [
     company: "Nimbus",
     icon: Sparkles,
     color: "secondary",
-    quote:
-      "Studio has improved my workflow. The components are appealing and perform well right out of the box.",
+    quote: "Flamehash has improved my workflow. The components are appealing and perform well right out of the box.",
   },
   {
     name: "Brad Hanna",
@@ -39,8 +38,7 @@ const testimonials = [
     company: "Orbital",
     icon: Orbit,
     color: "success",
-    quote:
-      "Using Studio has made my projects intuitive and efficient. The documentation is clear and thorough.",
+    quote: "Using Flamehash has made my projects intuitive and efficient. The documentation is clear and thorough.",
   },
   {
     name: "Brad Hanna",
@@ -48,8 +46,7 @@ const testimonials = [
     company: "Flux",
     icon: Zap,
     color: "info",
-    quote:
-      "The community around Studio is fantastic! I've received support, making my experience so much smoother.",
+    quote: "The community around Flamehash is fantastic! I've received support, making my experience so much smoother.",
   },
   {
     name: "Ella Johnson",
@@ -57,8 +54,7 @@ const testimonials = [
     company: "Verve",
     icon: Flame,
     color: "warning",
-    quote:
-      "Using Studio has made my projects more efficient, with clear documentation and a great component set.",
+    quote: "Using Flamehash has made my projects more efficient, with clear documentation and a great component set.",
   },
   {
     name: "Marcus Lee",
@@ -66,8 +62,7 @@ const testimonials = [
     company: "Solace",
     icon: Waves,
     color: "accent",
-    quote:
-      "The build quality is outstanding. Every component just works, and the theming system saved us weeks.",
+    quote: "The build quality is outstanding. Every component just works, and the theming system saved us weeks.",
   },
   {
     name: "Priya Nair",
@@ -75,8 +70,7 @@ const testimonials = [
     company: "Compass",
     icon: Compass,
     color: "primary",
-    quote:
-      "Support response time is incredible. We shipped our redesign twice as fast using this component set.",
+    quote: "Support response time is incredible. We shipped our redesign twice as fast using Flamehash.",
   },
   {
     name: "Tom Reyes",
@@ -84,8 +78,7 @@ const testimonials = [
     company: "Meadow",
     icon: Leaf,
     color: "success",
-    quote:
-      "Clean, accessible, and genuinely well thought out. It's rare to find a kit this polished out of the box.",
+    quote: "Clean, accessible, and genuinely well thought out. It's rare to find a kit this polished out of the box.",
   },
   {
     name: "Aiko Sato",
@@ -93,8 +86,7 @@ const testimonials = [
     company: "Facet",
     icon: Gem,
     color: "secondary",
-    quote:
-      "The attention to detail in every state — hover, focus, loading — is what sold the whole team on this.",
+    quote: "The attention to detail in every state — hover, focus, loading — is what sold the whole team on Flamehash.",
   },
 ];
 

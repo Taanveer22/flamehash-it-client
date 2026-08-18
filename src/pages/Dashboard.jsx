@@ -6,10 +6,10 @@ import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "
 /* ------------------------------------------------------------------ */
 
 const STATS = [
-  { label: "Total Customers", value: 5868, change: 12, trend: "up", icon: "users" },
-  { label: "New Leads", value: 1245, change: 8, trend: "up", icon: "userPlus" },
-  { label: "Deals Closed", value: 326, change: 12, trend: "up", icon: "check" },
-  { label: "Lost Deals", value: 89, change: -3, trend: "down", icon: "trendDown" },
+  { label: "Total Customers", value:250, change: 12, trend: "up", icon: "users" },
+  { label: "New Leads", value: 95, change: 8, trend: "up", icon: "userPlus" },
+  { label: "Deals Closed", value: 200, change: 12, trend: "up", icon: "check" },
+  { label: "Lost Deals", value: 15, change: -3, trend: "down", icon: "trendDown" },
 ];
 
 const REVENUE_DATA = [
@@ -22,7 +22,7 @@ const REVENUE_DATA = [
   { month: "Jul", closed: 8300, pipeline: 17900 },
   { month: "Aug", closed: 6400, pipeline: 14400 },
   { month: "Sep", closed: 4600, pipeline: 12200 },
-  { month: "Oct", closed: 13500, pipeline: 25600 },
+  { month: "Oct", closed: 1350, pipeline: 25600 },
   { month: "Nov", closed: 5700, pipeline: 14000 },
   { month: "Dec", closed: 9200, pipeline: 18000 },
 ];

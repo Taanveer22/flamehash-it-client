@@ -55,10 +55,11 @@ const primaryButtonClasses =
 // instead of hand-writing 3 near-identical <motion.div> blocks means
 // adding a 4th stat later is a one-line change.
 const stats = [
-  { id: "users", value: "10K+", label: "Active Users" },
-  { id: "uptime", value: "99.9%", label: "Uptime" },
-  { id: "support", value: "24/7", label: "Support" },
+  { id: "projects", value: "200+", label: "Projects Delivered" },
+  { id: "clients", value: "98%", label: "Client Satisfaction" },
+  { id: "roi", value: "3X+", label: "Average ROI Boost" }
 ];
+
 
 const DynamicSlide = ({ image, heading, description }) => {
   return (
@@ -132,7 +133,7 @@ const DynamicSlide = ({ image, heading, description }) => {
               }}
               className={primaryButtonClasses}
             >
-              Get Started
+              Book A Consultation
             </motion.button>
           </motion.div>
 

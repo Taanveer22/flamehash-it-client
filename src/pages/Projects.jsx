@@ -456,7 +456,7 @@ export default function Projects() {
     <div>
       <div className="mb-8">
         <Heading
-          title="Built for Results."
+          title="Our Projects"
           description="Explore how we turn technical challenges into scalable products that drive real revenue"
         />
       </div>
