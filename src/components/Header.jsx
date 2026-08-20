@@ -63,11 +63,7 @@ export default function Header() {
             transition={SPRING}
             className="flex h-9 w-9 items-center justify-center rounded-md border border-base-300 bg-base-200 font-semibold text-base-content"
           >
-            <img
-              src={logo}
-              alt="Logo"
-              className="h-full w-full object-cover"
-            />
+            <img src={logo} alt="Logo" className="h-full w-full object-cover" />
           </motion.div>
 
           <div>

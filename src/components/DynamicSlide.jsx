@@ -57,9 +57,8 @@ const primaryButtonClasses =
 const stats = [
   { id: "projects", value: "200+", label: "Projects Delivered" },
   { id: "clients", value: "98%", label: "Client Satisfaction" },
-  { id: "roi", value: "3X+", label: "Average ROI Boost" }
+  { id: "roi", value: "3X+", label: "Average ROI Boost" },
 ];
-
 
 const DynamicSlide = ({ image, heading, description }) => {
   return (
