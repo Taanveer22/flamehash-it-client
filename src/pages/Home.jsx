@@ -4,6 +4,7 @@ import Projects from "./Projects";
 import Services from "./Services";
 import Testimonials from "./Testimonials";
 import AboutUs from "./AboutUs";
+import Contact from "./Contact";
 
 const Home = () => {
   return (
@@ -25,6 +26,9 @@ const Home = () => {
       </div>
       <div className="mb-8 lg:mb-16">
         <Testimonials></Testimonials>
+      </div>
+      <div className="mb-8 lg:mb-16">
+        <Contact></Contact>
       </div>
     </section>
   );

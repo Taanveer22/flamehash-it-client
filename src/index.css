@@ -4,7 +4,7 @@
 
 @plugin "daisyui" {
   themes:
-    business --default,
+    coffee --default,
     corporate;
 }
 

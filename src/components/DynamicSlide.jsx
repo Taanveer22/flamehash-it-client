@@ -50,6 +50,12 @@ const statItemVariants = {
 const primaryButtonClasses =
   "inline-flex h-11 items-center justify-center rounded-lg bg-white px-7 text-sm font-semibold text-neutral-900 shadow-sm ring-1 ring-black/5 transition-colors duration-200 hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black sm:h-12 sm:px-8 sm:text-base";
 
+// TODO: replace with your real Google Calendar Appointment Schedule URL —
+// same one used in Header.jsx. Keeping it as one constant per file is fine
+// for now; if it ends up in more than 2-3 places, move it to a shared
+// config/constants file instead so you only update it in one spot.
+const BOOKING_URL = "https://calendar.app.google/s2cVuZ3noPphvJMQ8";
+
 // ── Data for the stats row ──────────────────────────────────────────
 // Same trick as the slides array in Carousel.jsx — looping over data
 // instead of hand-writing 3 near-identical <motion.div> blocks means
@@ -105,13 +111,19 @@ const DynamicSlide = ({ image, heading, description }) => {
             {description}
           </motion.p>
 
-          {/* Single CTA — centered, same size on every breakpoint */}
+          {/* Single CTA — centered, same size on every breakpoint.
+              This is a real link (motion.a + href), not a <button>, since
+              clicking it should take the visitor to the booking page
+              rather than run some in-page JS handler. Opens in a new tab
+              so they don't lose the slide/carousel they were on. */}
           <motion.div
             variants={itemVariants}
             className="mt-6 flex items-center justify-center sm:mt-10"
           >
-            <motion.button
-              type="button"
+            <motion.a
+              href={BOOKING_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               // Soft glow that gently pulses forever, drawing the eye to
@@ -132,8 +144,8 @@ const DynamicSlide = ({ image, heading, description }) => {
               }}
               className={primaryButtonClasses}
             >
-              Book A Consultation
-            </motion.button>
+              Book An Appointment
+            </motion.a>
           </motion.div>
 
           {/* Stats row — loops over the `stats` array above instead of
