@@ -3,9 +3,7 @@
 @import "tailwindcss";
 
 @plugin "daisyui" {
-  themes:
-    coffee --default,
-    corporate;
+  themes: luxury --default;
 }
 
 body {
